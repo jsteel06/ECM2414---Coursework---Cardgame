@@ -1,0 +1,18 @@
+# Compiled output
+out/
+bin/
+*.class
+
+# Game output files (regenerated every run)
+player*_output.txt
+deck*_output.txt
+
+# IntelliJ personal settings and AI assistant folder
+.idea/workspace.xml
+.idea/shelf/
+.ai/
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
