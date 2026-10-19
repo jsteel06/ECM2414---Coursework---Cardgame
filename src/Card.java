@@ -13,7 +13,7 @@ public final class Card {
     //value getter
     public int getValue() { return value; }
 
-    //lets us print a card vaule directly
+    //lets us get the string of card value directly
     @Override
     public String toString() { return String.valueOf(value); }
 }

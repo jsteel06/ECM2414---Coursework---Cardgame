@@ -8,10 +8,8 @@ import java.util.List;
 
 public class CardDeck {
     //attributes
-    //deck: queue, FIFO
-    //deck id: int
-    private final Deque<Card> cards = new ArrayDeque<>();
-    private final int id;
+    private final Deque<Card> cards = new ArrayDeque<>();     //deck: queue, FIFO
+    private final int id;     //deck id: int
 
     //constructor just needs id
     public CardDeck(int id) {
