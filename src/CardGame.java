@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CountDownLatch;
 
 
 //asks for the number of players and the pack file, re-prompting until valid
@@ -16,10 +17,17 @@ public class CardGame {
         //ask the user where the card pack file is stored, keeps asking until it is valid
         List<Card> pack = askForPackLocation(input, n);
 
-        // TODO:
-        //  1. create the shared winner variable
-        //  2. create a list of card decks: createDecks()
-        //  3. create a list of players: createPlayers()
+
+
+
+        //shared by every player: 0 means no winner yet, otherwise the winner's id
+        AtomicInteger winner = new AtomicInteger(0);
+        //starts at n, each player counts down once it has checked its starting hand
+        CountDownLatch ready = new CountDownLatch(n);
+
+        // TODO: 2. decks = createDecks(n)
+        //    3.  List<Player> players = createPlayers(n, decks, winner, ready);
+        //TODO
         //  4. dealHands(pack, players, n)
         //  5. fillDecks(pack, decks, n)
         //  6. runGame(players)start the player threads and wait for them to finish
@@ -76,13 +84,15 @@ public class CardGame {
         return decks;
     }
 
-    //player i draws from deck i and discards to deck i+1 excpet player n discards to deck 1
-    static List<Player> createPlayers(int n, List<CardDeck> decks, AtomicInteger winner) {
+    //player i draws from deck i and discards to deck i+1 except player n discards to deck 1
+    //every player shares the same winner and ready latch
+    static List<Player> createPlayers(int n, List<CardDeck> decks, AtomicInteger winner, CountDownLatch ready) {
         List<Player> players = new ArrayList<>();
-        // TODO: for i: 1 to n, (the indexs are ids-1)
-        //         drawDeck    = decks.get(i - 1)
-        //         discardDeck = decks.get(i % n)  //this wraps around to discard to 1 for player n
-        //         add new Player(i, drawDeck, discardDeck, winner)
+        for (int i = 1; i <= n; i++) {
+            CardDeck drawDeck = decks.get(i - 1);   //index is id - 1
+            CardDeck discardDeck = decks.get(i % n);    //usually at index i but wraps round to deck 1 for player n
+            players.add(new Player(i, drawDeck, discardDeck, winner, ready)); //adds new player to list
+        }
         return players;
     }
 
