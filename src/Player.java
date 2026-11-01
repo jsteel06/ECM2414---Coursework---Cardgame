@@ -97,7 +97,6 @@ public class Player implements Runnable {
         String currentHand;
 
         // three nested synchronized blocks hold both decks and this player at the same time to keep as one atomic action
-        //synchronised this for testing methods
         synchronized (first) {
             synchronized (second) {
                 synchronized (this) {

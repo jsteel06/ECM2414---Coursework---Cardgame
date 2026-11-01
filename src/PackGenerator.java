@@ -20,10 +20,10 @@ public class PackGenerator {
 
         //value inputs
         int n = askForInt(input, "Please enter the number of players:", null);
-        int maxValue = askForInt(input, "Please enter the value of the highest card, default is" + n, n);
+        int maxValue = askForInt(input, "Please enter the value of the highest card, default is " + n, n);
 
         //file name input
-        System.out.println("Please enter file name, default is pack"+ n + ".txt):");
+        System.out.println("Please enter file name, default is pack" + n + ".txt");
         String name = input.nextLine().trim();
 
         //logic for default file name
@@ -68,7 +68,7 @@ public class PackGenerator {
     }
 
 
-        //returns 8n random card values
+    //returns 8n random card values
     public static List<Integer> generate(int n, int maxValue, Random random) {
         if (n < 1) {
             throw new IllegalArgumentException("number of players must be positive");

@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-//reads a pack file and validates for 8n lines and all postive intergers
+//reads a pack file and validates for 8n lines and all non negative intergers
 //public for testing
 public class PackLoader {
 
@@ -36,7 +36,7 @@ public class PackLoader {
 
         List<Card> pack = new ArrayList<>();
 
-        //imports utf-8
+        //reads file as utf-8
         try (BufferedReader reader = new BufferedReader(new FileReader(packFile, StandardCharsets.UTF_8))) {
             String line;
             int lineNumber = 0;
@@ -51,7 +51,7 @@ public class PackLoader {
         //long so a huge n wont overflow
         long expected = 8L * n;
         if (pack.size() != expected) {
-            throw new InvalidPackException("expected "+ expected +" cards");
+            throw new InvalidPackException("expected " + expected + " cards but found " + pack.size());
         }
         return pack;
     }
@@ -62,7 +62,7 @@ public class PackLoader {
         //remove spaces either side
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
-            throw new InvalidPackException(lineNumber + " is blank");
+            throw new InvalidPackException("line " + lineNumber + " is blank");
         }
 
         int value;
@@ -73,7 +73,7 @@ public class PackLoader {
         }
 
         if (value < 0) {
-            throw new InvalidPackException("line " + lineNumber + " is not postive");
+            throw new InvalidPackException("line " + lineNumber + " is negative");
         }
         return new Card(value);
     }

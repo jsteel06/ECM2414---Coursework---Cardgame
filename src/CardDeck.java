@@ -44,7 +44,7 @@ public class CardDeck {
         return cards.size();
     }
 
-    //returns a copy of the Array
+    //returns a copy of the deque
     public synchronized List<Card> getContents() {
         return new ArrayList<>(cards);
     }
