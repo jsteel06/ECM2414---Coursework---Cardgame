@@ -2,12 +2,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-//reads a pack file and checks it is valid before the game starts
-//a valid pack has exactly 8n lines, each holding a positive integer
-//public so the validation can be unit tested
+//reads a pack file and validates for 8n lines and all postive intergers
+//public for testing
 public class PackLoader {
 
     //thrown when the pack cant be used
@@ -24,27 +24,57 @@ public class PackLoader {
 
     //reads the pack file and returns its cards
     public static List<Card> load(String path, int n) throws InvalidPackException {
+        if (n < 1) {
+            throw new IllegalArgumentException("number of players must be positive");
+        }
+
+        //check file can be read
+        File packFile = new File(path);
+        if (!packFile.isFile() || !packFile.canRead()) {
+            throw new InvalidPackException("'" + path + "' was not found or could not be read");
+        }
+
         List<Card> pack = new ArrayList<>();
-        // TODO:
-        //  1. File packFile = new File(path)
-        //     if cant be read throw InvalidPackException
-        //  2. open it with a BufferedReader
-        //  3. read line by line, counting line numbers (start at 1) for error messages
-        //  4. catch IOException and rethrow it as InvalidPackException
-        //  5. use 8L * n (long) so a huge n can't overflow
-        //     if pack.size() != 8n, throw e.g. "expected 32 cards but found 30"
+
+        //imports utf-8
+        try (BufferedReader reader = new BufferedReader(new FileReader(packFile, StandardCharsets.UTF_8))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++; //increases line count
+                pack.add(parseCard(line, lineNumber)); //adds card to pack
+            }
+        } catch (IOException e) {
+            throw new InvalidPackException(e.getMessage());
+        }
+
+        //long so a huge n wont overflow
+        long expected = 8L * n;
+        if (pack.size() != expected) {
+            throw new InvalidPackException("expected "+ expected +" cards");
+        }
         return pack;
     }
 
     //turns one line of the file into a card
     private static Card parseCard(String line, int lineNumber) throws InvalidPackException {
-        // TODO:
-        //  - trim spaces off the line
-        //  - if it's empty, throw "line x is blank"
-        //  - Integer.parseInt the line
-        //      catch NumberFormatException and throw "line x is not a whole number"
-        //  - if value < 0 throw "line x is negative"
-        //  - otherwise return new Card(value)
-        return null;
+
+        //remove spaces either side
+        String trimmed = line.trim();
+        if (trimmed.isEmpty()) {
+            throw new InvalidPackException(lineNumber + " is blank");
+        }
+
+        int value;
+        try {
+            value = Integer.parseInt(trimmed);
+        } catch (NumberFormatException e) {
+            throw new InvalidPackException("line " + lineNumber + " is not an integer");
+        }
+
+        if (value < 0) {
+            throw new InvalidPackException("line " + lineNumber + " is not postive");
+        }
+        return new Card(value);
     }
 }

@@ -1,11 +1,10 @@
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-//asks for the number of players and the pack file, re-prompting until valid,
+//asks for the number of players and the pack file, re-prompting until valid
 //then sets up and starts the game
 public class CardGame {
 
@@ -14,18 +13,17 @@ public class CardGame {
         Scanner input = new Scanner(System.in);
         //ask user how many players
         int n = askForNumberOfPlayers(input);
-        //ask the user where the card pack file is stored on their computer
-        String packPath = askForPackLocation(input, n);
+        //ask the user where the card pack file is stored, keeps asking until it is valid
+        List<Card> pack = askForPackLocation(input, n);
 
         // TODO:
-        //  1. read the 8n cards from the pack file into a local list of cards: pack
-        //  2. create the shared winner variable
-        //  3. create a list of card decks: createDecks()
-        //  4. create a list of players: createPlayers()
-        //  5. dealHands(pack, players, n)
-        //  6. fillDecks(pack, decks, n)
-        //  7. runGame(players)start the player threads and wait for them to finish
-        //  8. writeDeckOutputs(decks) only after every player thread has finished
+        //  1. create the shared winner variable
+        //  2. create a list of card decks: createDecks()
+        //  3. create a list of players: createPlayers()
+        //  4. dealHands(pack, players, n)
+        //  5. fillDecks(pack, decks, n)
+        //  6. runGame(players)start the player threads and wait for them to finish
+        //  7. writeDeckOutputs(decks) only after every player thread has finished
     }
 
 
@@ -46,19 +44,24 @@ public class CardGame {
         }
     }
 
-    //keeps asking until the user gives a pack file that exists and can be read.
-    //check for exactly 8n cards
-    private static String askForPackLocation(Scanner input, int n) {
+    //keeps asking until the user gives a valid pack file then returns its cards
+    //PackLoader does the checking
+    private static List<Card> askForPackLocation(Scanner input, int n) {
         while (true) {
             System.out.println("Please enter location of pack to load:");
-            String path = input.nextLine();
-            File packFile = new File(path);
-            if (packFile.isFile() && packFile.canRead()) {
-                // TODO: read each line of file
-                //  check exactly 8n lines & each a single non neg integer
-                return path;
+            String path = input.nextLine().trim();
+
+            //removes "" around the path string
+            if (path.length() >= 2 && path.startsWith("\"") && path.endsWith("\"")) {
+                path = path.substring(1, path.length() - 1);
             }
-            System.out.println(path + "' was not found or could not be read");
+
+            try {
+                return PackLoader.load(path, n);
+            } catch (PackLoader.InvalidPackException e) {
+                //tell the user what is wrong then ask again
+                System.out.println("Invalid pack: " + e.getMessage());
+            }
         }
     }
 
