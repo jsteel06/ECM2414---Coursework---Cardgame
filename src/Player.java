@@ -185,6 +185,11 @@ public class Player implements Runnable {
         }
     }
 
+    //lets tests give the player somewhere to log without running its thread
+    void setOutput(BufferedWriter writer) {
+        out = writer;
+    }
+
     //writes one line to the output file
     private void log(String line) throws IOException {
         out.write(line); //writes line
