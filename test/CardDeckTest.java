@@ -48,12 +48,7 @@ public class CardDeckTest {
         assertNull(deck.drawFromTop());
     }
 
-    // redundent test to check draw empty again
-    @Test
-    public void testDrawFromEmptyDeckReturnsNullTwice() {
-        assertNull(deck.drawFromTop());
-        assertNull(deck.drawFromTop());
-    }
+
 
     // a null card can't be added
     @Test(expected = IllegalArgumentException.class)
