@@ -86,10 +86,6 @@ public class CardGame {
             System.out.println("Please enter location of pack to load:");
             String path = input.nextLine().trim();
 
-            //removes "" around the path string
-            if (path.length() >= 2 && path.startsWith("\"") && path.endsWith("\"")) {
-                path = path.substring(1, path.length() - 1);
-            }
 
             try {
                 return PackLoader.load(path, n);

@@ -8,21 +8,19 @@ public class CardTest {
     //a negative card must be rejected
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeValueRejected() {
-        // TODO: new Card(-1)
-        fail("not written yet");
+        new Card(-1);
     }
 
     //0 is non-negative so it is a valid card
     @Test
     public void testZeroIsAllowed() {
-        // TODO: new Card(0), check getValue() is 0
-        fail("not written yet");
+        Card card = new Card(0);
+        assertEquals(0, card.getValue());
     }
 
-    //toString gives just the value, the output files depend on this
+    //toString has to give the value as a string
     @Test
     public void testToStringIsTheValue() {
-        // TODO: assertEquals("7", new Card(7).toString())
-        fail("not written yet");
+        assertEquals("7", new Card(7).toString());
     }
 }
