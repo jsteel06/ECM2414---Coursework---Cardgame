@@ -13,6 +13,7 @@ public class CardDeckTest {
 
     private CardDeck deck;
 
+    // makes a new empty deck with id 1 before each test
     @Before
     public void setUp() {
         deck = new CardDeck(1);
@@ -31,6 +32,7 @@ public class CardDeckTest {
         deck.addToBottom(new Card(2));
         assertEquals(1, deck.drawFromTop().getValue());
 
+        // a card added after a draw still goes to the back
         deck.addToBottom(new Card(3));
         assertEquals(2, deck.drawFromTop().getValue());
         assertEquals(3, deck.drawFromTop().getValue());

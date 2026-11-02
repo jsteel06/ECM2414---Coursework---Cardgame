@@ -81,26 +81,31 @@ public class PackLoaderTest {
 
     //invalid packs, each should throw InvalidPackException
 
+    //7 lines is one short of 8
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testTooFewLinesRejected() throws Exception {
         load(validLines(7), 1);
     }
 
+    //9 lines is one too many
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testTooManyLinesRejected() throws Exception {
         load(validLines(9), 1);
     }
 
+    //an empty file has no cards at all
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testEmptyFileRejected() throws Exception {
         load(new String[0], 1);
     }
 
+    //a blank line isnt a card
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testBlankLineRejected() throws Exception {
         load(validLinesPlus(""), 1);
     }
 
+    //negative cards arent allowed
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testNegativeNumberRejected() throws Exception {
         String[] lines = validLines(8);
@@ -108,21 +113,25 @@ public class PackLoaderTest {
         load(lines, 1);
     }
 
+    //letters arent an interger
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testNonIntegerRejected() throws Exception {
         load(validLinesPlus("abc"), 1);
     }
 
+    //cards have to be whole numbers
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testDecimalRejected() throws Exception {
         load(validLinesPlus("2.5"), 1);
     }
 
+    //only one card per line
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testTwoNumbersOnOneLineRejected() throws Exception {
         load(validLinesPlus("2 3"), 1);
     }
 
+    //a file that doesnt exist cant be read
     @Test(expected = PackLoader.InvalidPackException.class)
     public void testMissingFileRejected() throws Exception {
         File missing = new File(folder.getRoot(), "missing.txt");

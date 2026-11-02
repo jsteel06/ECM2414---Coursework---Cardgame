@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 // CardGame should set up the ring correctly and play a whole game to the spec
 public class CardGameTest {
 
+    // temporary folder for the pack file the main test types in, deleted afterwards
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
@@ -83,6 +84,7 @@ public class CardGameTest {
 
 
 
+    // decks are numbered 1 to n in order, so deck at index i has id i+1
     @Test
     public void testCreateDecksNumberedOneToN() {
         List<CardDeck> decks = CardGame.createDecks(4);
@@ -134,7 +136,9 @@ public class CardGameTest {
         List<CardDeck> decks = CardGame.createDecks(3);
         List<Player> players = CardGame.createPlayers(3, decks, new AtomicInteger(0), new CountDownLatch(3));
         Player player3 = players.get(2);
+        // log lines not needed, so thrown away
         player3.setOutput(new BufferedWriter(Writer.nullWriter()));
+        // player 3 prefers 3s so the 1 is the only card it can discard
         for (Card card : TestHelper.list(1, 3, 3, 3)) {
             player3.addToHand(card);
         }
@@ -146,6 +150,7 @@ public class CardGameTest {
         assertEquals(List.of(1), TestHelper.values(decks.get(0).getContents()));      // discarded the 1 to deck 1
     }
 
+    // play needs exactly 8n cards, 15 isnt 16 so it should throw
     @Test(expected = IllegalArgumentException.class)
     public void testPlayRejectsWrongPackSize() throws Exception {
         CardGame.play(2, winnablePack(2, 1).subList(0, 15));
@@ -173,6 +178,7 @@ public class CardGameTest {
         assertEquals("player " + winner + " exits", lines.get(size - 2));
         assertTrue(lines.get(size - 1).startsWith("player " + winner + " final hand: "));
 
+        // all 4 cards in the final hand have to be the same value
         List<Integer> finalHand = TestHelper.valuesFromString(lines.get(size - 1));
         assertEquals(4, finalHand.size());
         assertEquals(4, Collections.frequency(finalHand, finalHand.get(0)));
@@ -200,6 +206,7 @@ public class CardGameTest {
             atTheEnd.addAll(TestHelper.valuesFromString(TestHelper.readLines("deck" + i + "_output.txt").get(0)));
         }
         List<Integer> atTheStart = TestHelper.values(pack);
+        // sort both so the order doesnt matter when comparing
         Collections.sort(atTheEnd);
         Collections.sort(atTheStart);
         assertEquals(atTheStart, atTheEnd);
@@ -264,6 +271,7 @@ public class CardGameTest {
             // nobody played, so the decks are exactly as they were filled
             assertEquals("deck1 contents: 1 2 2 2", TestHelper.readLines("deck1_output.txt").get(0));
             assertEquals("deck4 contents: 4 5 5 5", TestHelper.readLines("deck4_output.txt").get(0));
+            // clean up before the next game
             TestHelper.deleteOutputFiles(4);
         }
     }
@@ -298,8 +306,10 @@ public class CardGameTest {
     public void testMainRepromptsUntilInputsAreValid() throws Exception {
         File pack = TestHelper.writePackFile(folder.getRoot(), "pack.txt", "1", "1", "1", "1", "2", "3", "4", "5");
         String missing = new File(folder.getRoot(), "missing.txt").getPath();
+        // abc and 0 are invalid player numbers, then 1, then a file that doesnt exist, then the real pack
         String typed = "abc\n0\n1\n" + missing + "\n" + pack.getPath() + "\n";
 
+        // types the input into main and catches what it prints, put back in finally even if it fails
         InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
         ByteArrayOutputStream captured = new ByteArrayOutputStream();

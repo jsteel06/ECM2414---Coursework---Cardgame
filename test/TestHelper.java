@@ -17,7 +17,7 @@ public class TestHelper {
         List<Card> cards = new ArrayList<>();
         for (int value : values) {
             cards.add(new Card(value));
-        }
+        } // one card for each value
         return cards;
     }
 
@@ -33,6 +33,7 @@ public class TestHelper {
     // writes the lines exactly as given, so tests can make broken pack files
     static File writePackFile(File folder, String name, String... lines) throws IOException {
         File file = new File(folder, name);
+        // each string goes on its own line, blank and bad lines included
         Files.write(file.toPath(), List.of(lines));
         return file;
     }
@@ -46,11 +47,13 @@ public class TestHelper {
     // e.g. "player 1 hand: 2 2 3 5" goes to [2, 2, 3, 5]
     static List<Integer> valuesFromString(String line) {
         List<Integer> list = new ArrayList<>();
+        // the card values are everything after the colon
         String afterColon = line.substring(line.indexOf(':') + 1).trim();
         // if theres no cards.
         if (afterColon.isEmpty()) {
             return list;
         }
+        // values are split up by single spaces
         for (String part : afterColon.split(" ")) {
             list.add(Integer.parseInt(part));
         }
@@ -60,6 +63,7 @@ public class TestHelper {
     // deletes player and deck output files 1 to n so every test starts clean
     static void deleteOutputFiles(int n) {
         for (int i = 1; i <= n; i++) {
+            // delete() just returns false if the file isnt there, so no error
             new File("player" + i + "_output.txt").delete();
             new File("deck" + i + "_output.txt").delete();
         }

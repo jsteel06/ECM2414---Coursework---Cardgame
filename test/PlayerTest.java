@@ -26,6 +26,7 @@ public class PlayerTest {
 
     private static final long PLAY_TIME = 3000;   // how long the two real player threads play for
 
+    // new player 1 sat between deck 1 and deck 2 before each test, logging into the StringWriter
     @Before
     public void setUp() {
         leftDeck = new CardDeck(1);
@@ -66,12 +67,14 @@ public class PlayerTest {
         return values;
     }
 
+    // a hand cant hold more than 4 cards
     @Test(expected = IllegalStateException.class)
     public void testFifthCardRejected() {
         deal(player, 1, 2, 3, 4);
         player.addToHand(new Card(5));
     }
 
+    // a null card cant be added to a hand
     @Test(expected = IllegalArgumentException.class)
     public void testNullCardRejected() {
         player.addToHand(null);
@@ -85,6 +88,7 @@ public class PlayerTest {
         assertEquals(4, player.getHand().size());
     }
 
+    // four of the prefered value is a wining hand
     @Test
     public void testFourOfPreferredValueWins() {
         deal(player, 1, 1, 1, 1);
@@ -148,7 +152,7 @@ public class PlayerTest {
         deal(player, 1, 1, 2, 3);
         for (int i = 0; i < 20; i++) {
             fill(leftDeck, 5);
-        }
+        } // left deck now has twenty 5s
 
         for (int i = 0; i < 20; i++) {
             player.takeTurn();
@@ -196,6 +200,7 @@ public class PlayerTest {
 
         assertEquals(List.of(1, 2, 3, 4), TestHelper.values(player.getHand()));
         assertEquals(0, rightDeck.size());
+        // flush so anything logged would be in the StringWriter
         writer.flush();
         assertEquals("", log.toString());
     }
@@ -242,6 +247,7 @@ public class PlayerTest {
 
         assertTrue(solo.takeTurn());
 
+        // player keeps the 1 and discards the 2 back to the bottom of the same deck
         assertEquals(List.of(1, 3, 4, 5), TestHelper.values(solo.getHand()));
         assertEquals(List.of(6, 7, 8, 2), TestHelper.values(onlyDeck.getContents()));
     }
